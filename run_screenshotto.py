@@ -7,9 +7,12 @@ import logging.handlers
 import atexit
 from pathlib import Path # for schedule
 from textwrap import dedent # schedule
+from time import sleep # schedule
 
 import appdirs
 import click
+import schedule
+import arrow
 
 from screenshotto.__init__ import (APPNAME, VERSION_STRING, CONFIG_PATH,
                                    CONFIG_DIR)
@@ -159,7 +162,7 @@ def write_default_schedule():
     #schedule.every().friday.do(job)
     #schedule.every().saturday.do(job)
     #schedule.every().sunday.at("23:59").do(job)
-    """)
+    """).strip()
     with open(SCHEDFP, "w") as f:
         f.write(s)
 
@@ -184,11 +187,6 @@ def schedule_run(ctx):
         echo("You don't have a schedule set up!\n")
         ctx.invoke(schedule_edit)
     template = dedent("""
-        from time import sleep
-        import schedule
-        import arrow
-
-
         def job():
             termw, _ = click.get_terminal_size()
             print("\\r" + " ".ljust(termw), end="")
